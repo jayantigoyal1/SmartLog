@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'; // 1. Import useEffect
+import React, { useState, useEffect } from 'react';
 import { useTransactions } from "./TransactionContext";
 import AddGoalModal from './AddGoalModal';
 import Footer from './Footer';
 import GoalCard from './GoalCard';
-import { Plus } from 'lucide-react';
+import { Plus, ArrowLeft } from 'lucide-react';
 import ConfirmationModal from './ConfirmationModal';
 import ContributeToGoalModal from './ContributeToGoalModal';
+import { useNavigate } from "react-router-dom";
 
 export default function GoalsPage() {
   const { goals, setGoals } = useTransactions();
@@ -15,11 +16,10 @@ export default function GoalsPage() {
   const [goalToDelete, setGoalToDelete] = useState(null);
   const [showContributeModal, setShowContributeModal] = useState(false);
   const [selectedGoalId, setSelectedGoalId] = useState(null);
-
-  // 2. Add state for animation visibility
   const [isVisible, setIsVisible] = useState(false);
 
-  // 3. Trigger animation on component mount
+  const navigate = useNavigate();
+
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 10);
     return () => clearTimeout(timer);
@@ -49,15 +49,28 @@ export default function GoalsPage() {
       <main className="flex-1 w-full p-6">
         <div className="max-w-6xl mx-auto">
 
+          {/* Title + Back Arrow */}
           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
-            <h1 className="text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
-              Financial Goals
-            </h1>
+            <div className="flex items-center gap-3 mb-2">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition"
+                title="Back to Dashboard"
+              >
+                <ArrowLeft className="w-6 h-6 text-blue-600 dark:text-purple-400" />
+              </button>
+
+              <h1 className="text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Financial Goals
+              </h1>
+            </div>
+
             <p className={`transition-colors duration-300 ${darkMode ? "text-gray-400" : "text-gray-600"} mb-8`}>
               Set, track, and achieve your savings goals.
             </p>
           </div>
 
+          {/* Add New Goal Button */}
           <div className={`flex flex-col md:flex-row gap-4 mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '200ms' }}>
             <button
               onClick={() => setShowAddGoalModal(true)}
@@ -68,6 +81,7 @@ export default function GoalsPage() {
             </button>
           </div>
 
+          {/* Goals Section */}
           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '400ms' }}>
             <h3 className={`text-2xl font-bold mb-6 flex items-center gap-3 ${darkMode ? "text-gray-100" : "text-gray-800"}`}>
               <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full"></div>
@@ -90,8 +104,8 @@ export default function GoalsPage() {
               ))}
 
               {goals.length === 0 && (
-                <div className="col-span-full text-center py-12">
-                  {/* ... placeholder content ... */}
+                <div className="col-span-full text-center py-12 text-gray-500 dark:text-gray-400">
+                  You don’t have any goals yet. Start by adding one!
                 </div>
               )}
             </div>
